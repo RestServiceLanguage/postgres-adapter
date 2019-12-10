@@ -1,0 +1,14 @@
+{
+  "name": "@restservicelanguage/postgres-adapter",
+  "version": "1.0.1",
+  "description": "A database adapter for postgresql in rsl",
+  "main": "index.js",
+  "scripts": {},
+  "repository": "git@github.com:RestServiceLanguage/postgres-adapter.git",
+  "author": "Moritz Schramm <moritz.schramm@gmx.de>",
+  "license": "MIT",
+  "dependencies": {
+    "@restservicelanguage/database": "1.0.2",
+    "pg": "7.14.0"
+  }
+}
