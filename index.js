@@ -1,5 +1,6 @@
 const { DatabaseAdapter } = require('@restservicelanguage/database');
 const pg = require('pg');
+const TableQueryGenerator = require('./lib/TableQueryGenerator');
 
 module.exports = class PostgresAdapter extends DatabaseAdapter {
 
@@ -22,6 +23,11 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
   }
 
   async _createTable(type) {
+    const queryGenerator = new TableQueryGenerator({ type });
+    
+    const baseTableQuery = queryGenerator.generateBaseQuery();
+    const arrayQueries = queryGenerator.generateArrayQueries();
+
     await this._inTransaction(async function(client) {
       this.log(baseTableQuery);
       await client.query(baseTableQuery);
