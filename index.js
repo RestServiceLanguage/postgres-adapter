@@ -22,7 +22,7 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       database,
       port
     });
-    this._log = false;
+    this._log = log;
   }
 
   log(...element) {
@@ -35,28 +35,26 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     const columns = _.filter(type.properties, (property) => !_.isArray(property.type));
     const arrayTables = _.filter(type.properties, (property) => _.isArray(property.type));
 
-    const columnQuery = _(columns)
-      .map((column) => {
-        const customType = _.isNil(typeMapping[column.type]);
+    const columnQuery = _.map(columns, (column) => {
+      const customType = _.isNil(typeMapping[column.type]);
 
-        const type = customType ? 'INTEGER' : '';
-        let query = `${column.name} ${type}`;
+      const type = customType ? 'INTEGER' : '';
+      let query = `${column.name} ${type}`;
 
-        if (column.uniq) {
-          query += ' UNIQUE';
-        }
+      if (column.uniq) {
+        query += ' UNIQUE';
+      }
 
-        if (!column.nullable) {
-          query += ' NOT NULL';
-        }
+      if (!column.nullable) {
+        query += ' NOT NULL';
+      }
 
-        if (customType) {
-          query += `REFERENCES ${column.type.name}(id)`;
-        }
+      if (customType) {
+        query += `REFERENCES ${column.type.name}(id)`;
+      }
 
-        return query;
-      })
-      .join(', ');
+      return query;
+    });
 
     const baseTableQuery = `CREATE TABLE "${type.name}" (${['id SERIAL PRIMARY KEY', ...columnQuery].join(', ')});`;
     const arrayQueries = _.map(arrayTables, (property) => this._createArrayTableQuery({ type, property }));
