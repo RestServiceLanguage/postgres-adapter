@@ -68,7 +68,7 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
 
     const valueType = customType ? 'INTEGER' : typeMapping[property.type];
 
-    const query = `CREATE TABLE "${tableName}" (id SERIAL PRIMARY KEY, "${type.name}" INTEGER REFERENCES "${type.name}"(id), value ${valueType});`;
+    const query = `CREATE TABLE "${tableName}" (id SERIAL PRIMARY KEY, ${type.name} INTEGER REFERENCES ${type.name}(id), value ${valueType});`;
 
     return query;
   }
