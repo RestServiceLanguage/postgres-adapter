@@ -13,7 +13,7 @@ const typeMapping = {
 
 module.exports = class PostgresAdapter extends DatabaseAdapter {
 
-  constructor({ host, user, password, database, port }) {
+  constructor({ host, user, password, database, port = 5432, log = false }) {
     super();
     this._pool = new pg.Pool({
       user,
@@ -22,6 +22,13 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       database,
       port
     });
+    this._log = false;
+  }
+
+  log(...element) {
+    if (this._log) {
+      console.log(element);
+    }
   }
 
   async _createTable(type) {
@@ -55,8 +62,10 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     const arrayQueries = _.map(arrayTables, (property) => this._createArrayTableQuery({ type, property }));
 
     await this._inTransaction(async function(client) {
+      this.log(baseTableQuery);
       await client.query(baseTableQuery);
       for (const arrayQuery of arrayQueries) {
+        this.log(arrayQuery);
         await client.query(arrayQuery);
       }
     });
