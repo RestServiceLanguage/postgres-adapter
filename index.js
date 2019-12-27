@@ -51,7 +51,7 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       })
       .join(', ');
 
-    const baseTableQuery = `CREATE TABLE "${type.name}" (id SERIAL PRIMARY KEY, ${columnQuery});`;
+    const baseTableQuery = `CREATE TABLE "${type.name}" (${['id SERIAL PRIMARY KEY', ...columnQuery].join(', ')});`;
     const arrayQueries = _.map(arrayTables, (property) => this._createArrayTableQuery({ type, property }));
 
     await this._inTransaction(async function(client) {
