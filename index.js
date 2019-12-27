@@ -38,7 +38,7 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     const columnQuery = _.map(columns, (column) => {
       const customType = _.isNil(typeMapping[column.type]);
 
-      const type = customType ? 'INTEGER' : '';
+      const type = customType ? 'INTEGER' : typeMapping[column.type];
       let query = `${column.name} ${type}`;
 
       if (column.uniq) {
