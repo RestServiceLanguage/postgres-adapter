@@ -2,6 +2,7 @@ const _ = require('lodash');
 const CreateQueryGenerator = require('./lib/CreateQueryGenerator');
 const { DatabaseAdapter } = require('@restservicelanguage/database');
 const DeleteQueryGenerator = require('./lib/DeleteQueryGenerator');
+const handleError = require('./lib/errorHandler');
 const ListDataTransformator = require('./lib/ListDataTransformator');
 const ListQueryGenerator = require('./lib/ListQueryGenerator');
 const pg = require('pg');
@@ -162,9 +163,8 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       await exec.bind(this)(client);
       await client.query('COMMIT');
     } catch (e) {
-      console.error(e);
       await client.query('ROLLBACK');
-      throw e;
+      handleError(e);
     } finally {
       client.release();
     }
