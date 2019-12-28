@@ -72,7 +72,9 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
   async _inTransaction(exec) {
     const client = await this._getConnection();
     try {
+      await client.query('BEGIN');
       await exec.bind(this)(client);
+      await client.query('COMMIT');
     } catch (e) {
       console.error(e);
       await client.query('ROLLBACK');
