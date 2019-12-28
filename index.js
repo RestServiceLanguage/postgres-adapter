@@ -43,6 +43,12 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
   }
 
   async list({ type, filters = [], expands = [], limit = 100, offset = 0 }) {
+    expands = _(expands)
+      .map((expand) => _.find(type.properties, { name: expand }))
+      .compact()
+      .filter((expand) => expand.type.constructor.name === 'Type')
+      .value();
+
     const queryGenerator = new ListQueryGenerator({
       type,
       filters,
