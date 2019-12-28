@@ -1,3 +1,4 @@
+const CreateQueryGenerator = require('./lib/CreateQueryGenerator');
 const { DatabaseAdapter } = require('@restservicelanguage/database');
 const ListQueryGenerator = require('./lib/ListQueryGenerator');
 const pg = require('pg');
@@ -60,7 +61,18 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     }
   }
 
-  async insert(parameters) {
+  async insert({ type, data }) {
+    const queryGenerator = new CreateQueryGenerator({
+      type,
+      data
+    });
+
+    let id;
+    await this._inTransaction(async function(client) {
+      id = await client.query(queryGenerator.generateCreateQuery())
+    });
+
+    return id;
   }
 
   async update(parameters) {
