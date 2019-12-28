@@ -67,9 +67,12 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       data
     });
 
+    const query = queryGenerator.generateCreateQuery();
+    this.log(query);
+
     let id;
     await this._inTransaction(async function(client) {
-      id = await client.query(queryGenerator.generateCreateQuery())
+      id = await client.query(query)
     });
 
     return id;
