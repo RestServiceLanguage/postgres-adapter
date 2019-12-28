@@ -75,6 +75,8 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       id = await client.query(query)
     });
 
+    this.log(`CREATE ELEMENT ${id}`);
+
     return id;
   }
 
