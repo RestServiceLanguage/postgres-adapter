@@ -80,6 +80,14 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     }
   }
 
+  get({ type, id, expands = [] }) {
+    return this.list({
+      type,
+      filters: [`id=${id}`],
+      expands
+    });
+  }
+
   async insert({ type, data }) {
     const queryGenerator = new CreateQueryGenerator({
       type,
