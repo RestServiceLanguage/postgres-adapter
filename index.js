@@ -50,9 +50,12 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       offset
     });
 
+    const query = queryGenerator.generateListQuery()
+    this.log(query);
+
     const client = await this._getConnection();
     try {
-      const result = await client.query(queryGenerator.generateListQuery());
+      const result = await client.query(query);
       return result.rows;
     } catch (e) {
       console.error(e);
