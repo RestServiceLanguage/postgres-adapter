@@ -70,12 +70,17 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     const query = queryGenerator.generateCreateQuery();
     this.log(query);
 
-    let result;
+    let id;
     await this._inTransaction(async function(client) {
-      result = await client.query(query)
+      const result = await client.query(query)
+      id = result.rows[0].id;
+
+      const arrayQueries = queryGenerator.generateArrayQueries({ id });
+      const arrayPromises = _.map(arrayQueries, (arrayQuery) => client.query(arrayQuery));
+      await Promise.all(arrayPromises);
     });
 
-    return [result.rows[0].id];
+    return [id];
   }
 
   async update(parameters) {
