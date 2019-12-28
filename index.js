@@ -123,10 +123,18 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
 
     const query = queryGenerator.generateUpdateQuery();
     this.log(query);
+    const deleteQueries = queryGenerator.generateDeleteQueries();
     const arrayQueries = queryGenerator.generateArrayQueries();
 
     await this._inTransaction(async function(client) {
       await client.query(query);
+
+      const deletePromises = _.map(deleteQueries, (deleteQuery) => {
+        this.log(deleteQuery);
+        return client.query(deleteQuery);
+      });
+      await Promise.all(deletePromises);
+
       const arrayPromises = _.map(arrayQueries, (arrayQuery) => {
         this.log(arrayQuery);
         return client.query(arrayQuery);
