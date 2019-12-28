@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const CreateQueryGenerator = require('./lib/CreateQueryGenerator');
 const { DatabaseAdapter } = require('@restservicelanguage/database');
 const ListQueryGenerator = require('./lib/ListQueryGenerator');
@@ -76,7 +77,10 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       id = result.rows[0].id;
 
       const arrayQueries = queryGenerator.generateArrayQueries({ id });
-      const arrayPromises = _.map(arrayQueries, (arrayQuery) => client.query(arrayQuery));
+      const arrayPromises = _.map(arrayQueries, (arrayQuery) => {
+        this.log(arrayQuery);
+        return client.query(arrayQuery);
+      });
       await Promise.all(arrayPromises);
     });
 
