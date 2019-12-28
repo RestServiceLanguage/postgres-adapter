@@ -1,4 +1,5 @@
 const { DatabaseAdapter } = require('@restservicelanguage/database');
+const ListQueryGenerator = require('./lib/ListQueryGenerator');
 const pg = require('pg');
 const TableQueryGenerator = require('./lib/TableQueryGenerator');
 
@@ -38,7 +39,25 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     });
   }
 
-  async list(parameters) {
+  async list({ type, filters = [], expands = [], limit = 100, offset = 0 }) {
+    const queryGenerator = new ListQueryGenerator({
+      type,
+      filters,
+      expands,
+      limit,
+      offset
+    });
+
+    const client = await this._getConnection();
+    try {
+      const result = await client.query(queryGenerator.generateListQuery());
+      return result;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    } finally {
+      client.release();
+    }
   }
 
   async insert(parameters) {
