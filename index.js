@@ -5,6 +5,7 @@ const ListDataTransformator = require('./lib/ListDataTransformator');
 const ListQueryGenerator = require('./lib/ListQueryGenerator');
 const pg = require('pg');
 const TableQueryGenerator = require('./lib/TableQueryGenerator');
+const UpdateQueryGenerator = require('./lib/UpdateQueryGenerator');
 
 module.exports = class PostgresAdapter extends DatabaseAdapter {
 
@@ -113,7 +114,25 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     return [id];
   }
 
-  async update(parameters) {
+  async update({ type, data, id }) {
+    const queryGenerator = new UpdateQueryGenerator({
+      id,
+      type,
+      data
+    });
+
+    const query = queryGenerator.generateUpdateQuery();
+    this.log(query);
+    const arrayQueries = queryGenerator.generateArrayQueries();
+
+    await this._inTransaction(async function(client) {
+      await client.query(query);
+      const arrayPromises = _.map(arrayQueries, (arrayQuery) => {
+        this.log(arrayQuery);
+        return client.query(arrayQuery);
+      });
+      await Promise.all(arrayPromises);
+    });
   }
 
   async remove(parameters) {
