@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const CreateQueryGenerator = require('./lib/CreateQueryGenerator');
 const { DatabaseAdapter } = require('@restservicelanguage/database');
+const DeleteQueryGenerator = require('./lib/DeleteQueryGenerator');
 const ListDataTransformator = require('./lib/ListDataTransformator');
 const ListQueryGenerator = require('./lib/ListQueryGenerator');
 const pg = require('pg');
@@ -143,7 +144,15 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     });
   }
 
-  async remove(parameters) {
+  async remove({ type, id }) {
+    const queryGenerator = new DeleteQueryGenerator({ type, id });
+
+    const query = queryGenerator.generateDeleteQuery();
+    this.log(query);
+
+    await this._inTransaction(async function(client) {
+      await client.query(query);
+    });
   }
 
   async _inTransaction(exec) {
