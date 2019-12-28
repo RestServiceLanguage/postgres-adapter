@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const CreateQueryGenerator = require('./lib/CreateQueryGenerator');
 const { DatabaseAdapter } = require('@restservicelanguage/database');
+const ListDataTransformator = require('./lib/ListDataTransformator');
 const ListQueryGenerator = require('./lib/ListQueryGenerator');
 const pg = require('pg');
 const TableQueryGenerator = require('./lib/TableQueryGenerator');
@@ -53,10 +54,15 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
     const query = queryGenerator.generateListQuery()
     this.log(query);
 
+    const transformator = new ListDataTransformator({
+      type,
+      expands
+    });
+
     const client = await this._getConnection();
     try {
       const result = await client.query(query);
-      return result.rows;
+      return transformator.transformData(result.rows);
     } catch (e) {
       console.error(e);
       throw e;
