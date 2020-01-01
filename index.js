@@ -145,6 +145,8 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
       });
       await Promise.all(arrayPromises);
     });
+
+    return [id];
   }
 
   async remove({ type, id }) {
