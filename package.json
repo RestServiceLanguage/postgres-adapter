@@ -1,6 +1,6 @@
 {
   "name": "@restservicelanguage/postgres-adapter",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "A database adapter for postgresql in rsl",
   "main": "index.js",
   "scripts": {},
@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@restservicelanguage/database": "2.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "4.17.15",
     "pg": "7.17.0"
   }
 }
