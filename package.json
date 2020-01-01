@@ -1,6 +1,6 @@
 {
   "name": "@restservicelanguage/postgres-adapter",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A database adapter for postgresql in rsl",
   "main": "index.js",
   "scripts": {},
