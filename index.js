@@ -69,7 +69,8 @@ module.exports = class PostgresAdapter extends DatabaseAdapter {
 
     const transformator = new ListDataTransformator({
       type,
-      expands
+      expands,
+      orderBy
     });
 
     const client = await this._getConnection();
